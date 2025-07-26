@@ -14,7 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      mood_entries: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          intensity: number | null
+          mood: string
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          intensity?: number | null
+          mood: string
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          intensity?: number | null
+          mood?: string
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          confidence_stat: number | null
+          created_at: string
+          display_name: string | null
+          empathy_stat: number | null
+          energy_stat: number | null
+          focus_stat: number | null
+          id: string
+          level: number | null
+          total_xp: number | null
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          confidence_stat?: number | null
+          created_at?: string
+          display_name?: string | null
+          empathy_stat?: number | null
+          energy_stat?: number | null
+          focus_stat?: number | null
+          id?: string
+          level?: number | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          confidence_stat?: number | null
+          created_at?: string
+          display_name?: string | null
+          empathy_stat?: number | null
+          energy_stat?: number | null
+          focus_stat?: number | null
+          id?: string
+          level?: number | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      sticky_notes: {
+        Row: {
+          color: string | null
+          content: string
+          created_at: string
+          id: string
+          position_x: number | null
+          position_y: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          custom_quote_collections: Json | null
+          dashboard_layout: Json | null
+          font_family: string | null
+          id: string
+          mood_categories: string[] | null
+          personal_mantras: string[] | null
+          theme_gradient: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          custom_quote_collections?: Json | null
+          dashboard_layout?: Json | null
+          font_family?: string | null
+          id?: string
+          mood_categories?: string[] | null
+          personal_mantras?: string[] | null
+          theme_gradient?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          custom_quote_collections?: Json | null
+          dashboard_layout?: Json | null
+          font_family?: string | null
+          id?: string
+          mood_categories?: string[] | null
+          personal_mantras?: string[] | null
+          theme_gradient?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
