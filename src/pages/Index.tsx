@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { User, Session } from "@supabase/supabase-js";
 import VyralStats from "@/components/VyralStats";
 import VybeOfTheDay from "@/components/VybeOfTheDay";
 import MoodTracker from "@/components/MoodTracker";
@@ -6,36 +7,100 @@ import QuickActions from "@/components/QuickActions";
 import Lyfeboard from "@/components/Lyfeboard";
 import ThemeCustomizer from "@/components/ThemeCustomizer";
 import SignInScreen from "@/components/SignInScreen";
+import VentingScreen from "@/components/VentingScreen";
+import SocialScreen from "@/components/SocialScreen";
+import BottomNavigation from "@/components/BottomNavigation";
 import { Button } from "@/components/ui/button";
-import { Zap, User, Settings, LogIn } from "lucide-react";
+import { Zap, User as UserIcon, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'venting' | 'social'>('dashboard');
 
-  const handleSignIn = (email: string) => {
-    setUserEmail(email);
-    setIsSignedIn(true);
-    setShowSignIn(false);
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast.error("Error signing out");
+      } else {
+        toast.success("Signed out successfully");
+        setCurrentView('dashboard');
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    }
   };
 
-  const handleSignOut = () => {
-    setIsSignedIn(false);
-    setUserEmail("");
-  };
-
-  if (showSignIn) {
+  // Loading state
+  if (loading) {
     return (
-      <SignInScreen 
-        onSignIn={handleSignIn}
-        onBack={() => setShowSignIn(false)}
-      />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Loading Vyral...</p>
+        </div>
+      </div>
     );
   }
 
+  // Authentication required
+  if (!user || !session) {
+    return <SignInScreen onSignIn={() => {}} />;
+  }
+
+  // Render content based on current view
+  const renderContent = () => {
+    switch (currentView) {
+      case 'venting':
+        return <VentingScreen />;
+      case 'social':
+        return <SocialScreen />;
+      default:
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column */}
+            <div className="lg:col-span-2 space-y-6">
+              <Lyfeboard />
+              <VybeOfTheDay />
+            </div>
+            
+            {/* Right Column */}
+            <div className="space-y-6">
+              <VyralStats />
+              <MoodTracker />
+              <QuickActions />
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="border-b border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
@@ -51,34 +116,15 @@ const Index = () => {
             </div>
             
             <div className="flex items-center gap-2">
-              {isSignedIn && (
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-glow-pulse" />
-                  <span className="text-muted-foreground">Level 3</span>
-                  <span className="text-primary font-medium">1,247 XP</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-2 h-2 bg-primary rounded-full animate-glow-pulse" />
+                <span className="text-muted-foreground">Level 3</span>
+                <span className="text-primary font-medium">1,247 XP</span>
+              </div>
               
-              {isSignedIn ? (
-                <>
-                  <Button variant="ghost" size="sm" title={userEmail}>
-                    <User className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShowSignIn(true)}
-                  className="hover:text-primary"
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-              )}
+              <Button variant="ghost" size="sm" title={user.email || ''}>
+                <UserIcon className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -86,21 +132,15 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
-            <Lyfeboard />
-            <VybeOfTheDay />
-          </div>
-          
-          {/* Right Column */}
-          <div className="space-y-6">
-            <VyralStats />
-            <MoodTracker />
-            <QuickActions />
-          </div>
-        </div>
+        {renderContent()}
       </main>
+      
+      {/* Bottom Navigation */}
+      <BottomNavigation 
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        onSignOut={handleSignOut}
+      />
       
       <ThemeCustomizer />
     </div>

@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Eye, EyeOff } from "lucide-react";
+import { Zap, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SignInScreenProps {
-  onSignIn: (email: string) => void;
-  onBack: () => void;
+  onSignIn: () => void;
 }
 
-const SignInScreen = ({ onSignIn, onBack }: SignInScreenProps) => {
+const SignInScreen = ({ onSignIn }: SignInScreenProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [signUpData, setSignUpData] = useState({ 
@@ -21,18 +21,36 @@ const SignInScreen = ({ onSignIn, onBack }: SignInScreenProps) => {
     password: "", 
     confirmPassword: "" 
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signInData.email || !signInData.password) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Welcome back to Vyral!");
-    onSignIn(signInData.email);
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: signInData.email,
+        password: signInData.password,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Welcome back to Vyral!");
+        onSignIn();
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signUpData.name || !signUpData.email || !signUpData.password) {
       toast.error("Please fill in all fields");
@@ -42,8 +60,38 @@ const SignInScreen = ({ onSignIn, onBack }: SignInScreenProps) => {
       toast.error("Passwords don't match");
       return;
     }
-    toast.success("Account created! Welcome to Vyral!");
-    onSignIn(signUpData.email);
+    if (signUpData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signUp({
+        email: signUpData.email,
+        password: signUpData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            display_name: signUpData.name,
+            username: signUpData.email.split('@')[0]
+          }
+        }
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! Check your email to verify your account.");
+        onSignIn();
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,8 +153,15 @@ const SignInScreen = ({ onSignIn, onBack }: SignInScreenProps) => {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full vyral-button-primary">
-                  Sign In
+                <Button type="submit" className="w-full vyral-button-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
               </form>
             </TabsContent>
@@ -168,18 +223,20 @@ const SignInScreen = ({ onSignIn, onBack }: SignInScreenProps) => {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full vyral-button-primary">
-                  Create Account
+                <Button type="submit" className="w-full vyral-button-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
 
-          <div className="mt-6 text-center">
-            <Button variant="ghost" onClick={onBack} className="text-sm text-muted-foreground">
-              ← Back to Demo
-            </Button>
-          </div>
         </Card>
       </div>
     </div>
