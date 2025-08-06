@@ -1,12 +1,39 @@
+import { useState } from "react";
 import VyralStats from "@/components/VyralStats";
 import VybeOfTheDay from "@/components/VybeOfTheDay";
 import MoodTracker from "@/components/MoodTracker";
 import QuickActions from "@/components/QuickActions";
 import Lyfeboard from "@/components/Lyfeboard";
+import ThemeCustomizer from "@/components/ThemeCustomizer";
+import SignInScreen from "@/components/SignInScreen";
 import { Button } from "@/components/ui/button";
-import { Zap, User, Settings } from "lucide-react";
+import { Zap, User, Settings, LogIn } from "lucide-react";
 
 const Index = () => {
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  const handleSignIn = (email: string) => {
+    setUserEmail(email);
+    setIsSignedIn(true);
+    setShowSignIn(false);
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    setUserEmail("");
+  };
+
+  if (showSignIn) {
+    return (
+      <SignInScreen 
+        onSignIn={handleSignIn}
+        onBack={() => setShowSignIn(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -24,17 +51,34 @@ const Index = () => {
             </div>
             
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-primary rounded-full animate-glow-pulse" />
-                <span className="text-muted-foreground">Level 3</span>
-                <span className="text-primary font-medium">1,247 XP</span>
-              </div>
-              <Button variant="ghost" size="sm">
-                <User className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="w-4 h-4" />
-              </Button>
+              {isSignedIn && (
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-glow-pulse" />
+                  <span className="text-muted-foreground">Level 3</span>
+                  <span className="text-primary font-medium">1,247 XP</span>
+                </div>
+              )}
+              
+              {isSignedIn ? (
+                <>
+                  <Button variant="ghost" size="sm" title={userEmail}>
+                    <User className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowSignIn(true)}
+                  className="hover:text-primary"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -57,6 +101,8 @@ const Index = () => {
           </div>
         </div>
       </main>
+      
+      <ThemeCustomizer />
     </div>
   );
 };
