@@ -27,10 +27,10 @@ const BottomNavigation = ({ currentView, onViewChange, onSignOut }: BottomNaviga
               variant="ghost"
               size="sm"
               onClick={() => onViewChange(item.id)}
-              className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg transition-colors ${
+              className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg transition-all duration-300 hover:scale-105 ${
                 isActive 
-                  ? 'text-primary bg-primary/10' 
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  ? "text-primary bg-primary/10 animate-bounce-in" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -43,7 +43,7 @@ const BottomNavigation = ({ currentView, onViewChange, onSignOut }: BottomNaviga
           variant="ghost"
           size="sm"
           onClick={onSignOut}
-          className="flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+          className="flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-300 hover:scale-105 hover:animate-wiggle"
         >
           <LogOut className="w-5 h-5" />
           <span className="text-xs font-medium">Sign Out</span>
