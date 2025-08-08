@@ -11,6 +11,8 @@ import VentingScreen from "@/components/VentingScreen";
 import SocialScreen from "@/components/SocialScreen";
 import BottomNavigation from "@/components/BottomNavigation";
 import LoadingScreen from "@/components/LoadingScreen";
+import GameNavigation from "@/components/GameNavigation";
+import VybeStryks from "@/components/VybeStrykes";
 import { Button } from "@/components/ui/button";
 import { Zap, User as UserIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +24,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'venting' | 'social'>('dashboard');
+  const [currentGame, setCurrentGame] = useState<'vybestryke' | 'vybetree' | 'lyfegoals' | null>(null);
 
   useEffect(() => {
     // Show loading screen for at least 2 seconds for better UX
@@ -77,39 +80,75 @@ const Index = () => {
 
   // Render content based on current view
   const renderContent = () => {
-    switch (currentView) {
-      case 'venting':
-        return <VentingScreen />;
-      case 'social':
-        return <SocialScreen />;
-      default:
-        return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                <Lyfeboard />
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <VybeOfTheDay />
-              </div>
-            </div>
-            
-            {/* Right Column */}
-            <div className="space-y-6">
-              <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <VyralStats />
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <MoodTracker />
-              </div>
-              <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-                <QuickActions />
-              </div>
-            </div>
-          </div>
-        );
+    if (currentView === 'venting') {
+      return <VentingScreen />;
     }
+    
+    if (currentView === 'social') {
+      return <SocialScreen />;
+    }
+    
+    // Game views
+    if (currentGame === 'vybestryke') {
+      return <VybeStryks onBack={() => setCurrentGame(null)} />;
+    }
+    
+    if (currentGame === 'vybetree') {
+      return (
+        <div className="vyral-card text-center p-8">
+          <div className="text-6xl mb-4">🌳</div>
+          <h2 className="text-2xl font-bold mb-4">VybeTree</h2>
+          <p className="text-muted-foreground mb-6">Coming Soon! Track your growth and achievements.</p>
+          <Button onClick={() => setCurrentGame(null)} className="vyral-button-primary">
+            Back to Dashboard
+          </Button>
+        </div>
+      );
+    }
+    
+    if (currentGame === 'lyfegoals') {
+      return (
+        <div className="vyral-card text-center p-8">
+          <div className="text-6xl mb-4">🎯</div>
+          <h2 className="text-2xl font-bold mb-4">LyfeGoals</h2>
+          <p className="text-muted-foreground mb-6">Coming Soon! Set and achieve your life goals.</p>
+          <Button onClick={() => setCurrentGame(null)} className="vyral-button-primary">
+            Back to Dashboard
+          </Button>
+        </div>
+      );
+    }
+    
+    // Dashboard view
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <Lyfeboard />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <VybeOfTheDay />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.25s' }}>
+            <GameNavigation currentGame={currentGame} onGameChange={setCurrentGame} />
+          </div>
+        </div>
+        
+        {/* Right Column */}
+        <div className="space-y-6">
+          <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <VyralStats />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <MoodTracker />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <QuickActions />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (

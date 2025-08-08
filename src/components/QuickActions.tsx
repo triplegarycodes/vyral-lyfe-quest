@@ -5,13 +5,6 @@ import { Plus, Target, BookOpen, Gamepad2, TrendingUp } from "lucide-react";
 const QuickActions = () => {
   const actions = [
     {
-      icon: BookOpen,
-      label: "Quick Journal",
-      description: "Drop your thoughts",
-      onClick: () => console.log("Journal"),
-      gradient: "from-blue-500 to-cyan-500"
-    },
-    {
       icon: Target,
       label: "Daily Goal",
       description: "Set today's focus",
