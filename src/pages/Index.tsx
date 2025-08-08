@@ -13,6 +13,8 @@ import BottomNavigation from "@/components/BottomNavigation";
 import LoadingScreen from "@/components/LoadingScreen";
 import GameNavigation from "@/components/GameNavigation";
 import VybeStryks from "@/components/VybeStrykes";
+import VybeTreeView from "@/components/VybeTreeView";
+import GoalsView from "@/components/GoalsView";
 import { Button } from "@/components/ui/button";
 import { Zap, User as UserIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +25,7 @@ const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'venting' | 'social'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'venting' | 'social' | 'vybestryke' | 'vybetree'>('dashboard');
   const [currentGame, setCurrentGame] = useState<'vybestryke' | 'vybetree' | 'lyfegoals' | null>(null);
 
   useEffect(() => {
@@ -86,6 +88,14 @@ const Index = () => {
     
     if (currentView === 'social') {
       return <SocialScreen />;
+    }
+
+    if (currentView === 'vybestryke') {
+      return <GoalsView onBack={() => setCurrentView('dashboard')} />;
+    }
+
+    if (currentView === 'vybetree') {
+      return <VybeTreeView onBack={() => setCurrentView('dashboard')} />;
     }
     
     // Game views
