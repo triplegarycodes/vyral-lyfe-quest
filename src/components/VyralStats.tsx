@@ -6,21 +6,22 @@ interface StatBarProps {
   label: string;
   value: number;
   maxValue: number;
-  color?: string;
 }
 
-const StatBar = ({ label, value, maxValue, color = "primary" }: StatBarProps) => {
+const StatBar = ({ label, value, maxValue }: StatBarProps) => {
   const percentage = Math.min((value / maxValue) * 100, 100);
-  
+
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="text-xs text-muted-foreground">{value}/{maxValue}</span>
+    <div className="mb-3">
+      <div className="flex justify-between text-sm font-medium text-vy.neon mb-1">
+        <span>{label}</span>
+        <span>
+          {value}/{maxValue}
+        </span>
       </div>
-      <div className="vyral-stat-bar">
-        <div 
-          className="vyral-stat-fill transition-all duration-300 ease-out"
+      <div className="h-2 bg-vy.bg/40 rounded-full">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-vy.neon via-vy.pop to-vy.gold shadow-[0_0_6px_#41F3FF] transition-[width] duration-700"
           style={{ width: `${percentage}%` }}
         />
       </div>
