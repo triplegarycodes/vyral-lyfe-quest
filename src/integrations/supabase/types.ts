@@ -47,48 +47,63 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
-          confidence_stat: number | null
+          clutch_up_stat: number | null
+          comeback_season_stat: number | null
           created_at: string
           display_name: string | null
-          empathy_stat: number | null
-          energy_stat: number | null
-          focus_stat: number | null
+          head_space_stat: number | null
           id: string
           level: number | null
+          mirror_mind_stat: number | null
+          moralus_stat: number | null
+          real_feels_stat: number | null
+          scene_sense_stat: number | null
           total_xp: number | null
           updated_at: string
           user_id: string
           username: string | null
+          vybe_chek_stat: number | null
+          w_core_stat: number | null
         }
         Insert: {
           avatar_url?: string | null
-          confidence_stat?: number | null
+          clutch_up_stat?: number | null
+          comeback_season_stat?: number | null
           created_at?: string
           display_name?: string | null
-          empathy_stat?: number | null
-          energy_stat?: number | null
-          focus_stat?: number | null
+          head_space_stat?: number | null
           id?: string
           level?: number | null
+          mirror_mind_stat?: number | null
+          moralus_stat?: number | null
+          real_feels_stat?: number | null
+          scene_sense_stat?: number | null
           total_xp?: number | null
           updated_at?: string
           user_id: string
           username?: string | null
+          vybe_chek_stat?: number | null
+          w_core_stat?: number | null
         }
         Update: {
           avatar_url?: string | null
-          confidence_stat?: number | null
+          clutch_up_stat?: number | null
+          comeback_season_stat?: number | null
           created_at?: string
           display_name?: string | null
-          empathy_stat?: number | null
-          energy_stat?: number | null
-          focus_stat?: number | null
+          head_space_stat?: number | null
           id?: string
           level?: number | null
+          mirror_mind_stat?: number | null
+          moralus_stat?: number | null
+          real_feels_stat?: number | null
+          scene_sense_stat?: number | null
           total_xp?: number | null
           updated_at?: string
           user_id?: string
           username?: string | null
+          vybe_chek_stat?: number | null
+          w_core_stat?: number | null
         }
         Relationships: []
       }

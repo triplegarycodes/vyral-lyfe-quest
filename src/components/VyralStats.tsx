@@ -30,10 +30,15 @@ const StatBar = ({ label, value, maxValue, color = "primary" }: StatBarProps) =>
 
 const VyralStats = () => {
   const [stats, setStats] = useState({
-    focus: 0,
-    energy: 0,
-    empathy: 0,
-    confidence: 0,
+    wCore: 50,
+    mirrorMind: 50,
+    realFeels: 50,
+    vybeChek: 50,
+    moralus: 50,
+    comebackSeason: 50,
+    clutchUp: 50,
+    headSpace: 50,
+    sceneSense: 50,
     level: 1,
     totalXp: 0
   });
@@ -69,16 +74,21 @@ const VyralStats = () => {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('focus_stat, energy_stat, empathy_stat, confidence_stat, level, total_xp')
+        .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profile) {
         setStats({
-          focus: profile.focus_stat || 0,
-          energy: profile.energy_stat || 0,
-          empathy: profile.empathy_stat || 0,
-          confidence: profile.confidence_stat || 0,
+          wCore: profile.w_core_stat || 50,
+          mirrorMind: profile.mirror_mind_stat || 50,
+          realFeels: profile.real_feels_stat || 50,
+          vybeChek: profile.vybe_chek_stat || 50,
+          moralus: profile.moralus_stat || 50,
+          comebackSeason: profile.comeback_season_stat || 50,
+          clutchUp: profile.clutch_up_stat || 50,
+          headSpace: profile.head_space_stat || 50,
+          sceneSense: profile.scene_sense_stat || 50,
           level: profile.level || 1,
           totalXp: profile.total_xp || 0
         });
@@ -96,11 +106,16 @@ const VyralStats = () => {
           Level {stats.level} • {stats.totalXp} XP
         </div>
       </div>
-      <div className="space-y-4">
-        <StatBar label="Focus" value={stats.focus} maxValue={100} />
-        <StatBar label="Energy" value={stats.energy} maxValue={100} />
-        <StatBar label="Empathy" value={stats.empathy} maxValue={100} />
-        <StatBar label="Confidence" value={stats.confidence} maxValue={100} />
+      <div className="grid grid-cols-2 gap-3">
+        <StatBar label="W-Core" value={stats.wCore} maxValue={100} />
+        <StatBar label="MirrorMind" value={stats.mirrorMind} maxValue={100} />
+        <StatBar label="RealFeels" value={stats.realFeels} maxValue={100} />
+        <StatBar label="VybeChek" value={stats.vybeChek} maxValue={100} />
+        <StatBar label="Moralus" value={stats.moralus} maxValue={100} />
+        <StatBar label="Comeback" value={stats.comebackSeason} maxValue={100} />
+        <StatBar label="ClutchUp" value={stats.clutchUp} maxValue={100} />
+        <StatBar label="HeadSpace" value={stats.headSpace} maxValue={100} />
+        <StatBar label="SceneSense" value={stats.sceneSense} maxValue={100} />
       </div>
     </Card>
   );

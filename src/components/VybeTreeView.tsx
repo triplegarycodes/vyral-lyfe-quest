@@ -9,20 +9,30 @@ interface VybeTreeViewProps {
 }
 
 interface UserStats {
-  focus_stat: number;
-  energy_stat: number;
-  empathy_stat: number;
-  confidence_stat: number;
+  w_core_stat: number;
+  mirror_mind_stat: number;
+  real_feels_stat: number;
+  vybe_chek_stat: number;
+  moralus_stat: number;
+  comeback_season_stat: number;
+  clutch_up_stat: number;
+  head_space_stat: number;
+  scene_sense_stat: number;
   level: number;
   total_xp: number;
 }
 
 const VybeTreeView = ({ onBack }: VybeTreeViewProps) => {
   const [stats, setStats] = useState<UserStats>({
-    focus_stat: 0,
-    energy_stat: 0,
-    empathy_stat: 0,
-    confidence_stat: 0,
+    w_core_stat: 50,
+    mirror_mind_stat: 50,
+    real_feels_stat: 50,
+    vybe_chek_stat: 50,
+    moralus_stat: 50,
+    comeback_season_stat: 50,
+    clutch_up_stat: 50,
+    head_space_stat: 50,
+    scene_sense_stat: 50,
     level: 1,
     total_xp: 0
   });
@@ -51,14 +61,19 @@ const VybeTreeView = ({ onBack }: VybeTreeViewProps) => {
       .from('profiles')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profile) {
       setStats({
-        focus_stat: profile.focus_stat || 0,
-        energy_stat: profile.energy_stat || 0,
-        empathy_stat: profile.empathy_stat || 0,
-        confidence_stat: profile.confidence_stat || 0,
+        w_core_stat: profile.w_core_stat || 50,
+        mirror_mind_stat: profile.mirror_mind_stat || 50,
+        real_feels_stat: profile.real_feels_stat || 50,
+        vybe_chek_stat: profile.vybe_chek_stat || 50,
+        moralus_stat: profile.moralus_stat || 50,
+        comeback_season_stat: profile.comeback_season_stat || 50,
+        clutch_up_stat: profile.clutch_up_stat || 50,
+        head_space_stat: profile.head_space_stat || 50,
+        scene_sense_stat: profile.scene_sense_stat || 50,
         level: profile.level || 1,
         total_xp: profile.total_xp || 0
       });
@@ -119,13 +134,15 @@ const VybeTreeView = ({ onBack }: VybeTreeViewProps) => {
           </div>
         </Card>
 
-        <Card className="vyral-card p-6 h-96 relative overflow-hidden">
+        <Card className="vyral-card p-6 h-96 relative overflow-hidden mb-4">
           {/* Tree branches */}
-          <TreeBranch x1={50} y1={85} x2={30} y2={65} />
-          <TreeBranch x1={50} y1={85} x2={70} y2={65} />
-          <TreeBranch x1={30} y1={65} x2={50} y2={45} />
-          <TreeBranch x1={70} y1={65} x2={50} y2={45} />
-          <TreeBranch x1={50} y1={45} x2={50} y2={25} />
+          <TreeBranch x1={50} y1={85} x2={25} y2={65} />
+          <TreeBranch x1={50} y1={85} x2={75} y2={65} />
+          <TreeBranch x1={25} y1={65} x2={15} y2={45} />
+          <TreeBranch x1={25} y1={65} x2={35} y2={45} />
+          <TreeBranch x1={75} y1={65} x2={65} y2={45} />
+          <TreeBranch x1={75} y1={65} x2={85} y2={45} />
+          <TreeBranch x1={50} y1={85} x2={50} y2={25} />
 
           {/* Root - Level */}
           <TreeNode 
@@ -136,59 +153,89 @@ const VybeTreeView = ({ onBack }: VybeTreeViewProps) => {
             color="bg-gradient-to-r from-purple-500 to-indigo-500" 
           />
 
-          {/* First tier - Energy & Focus */}
+          {/* Core stats tier */}
           <TreeNode 
-            label="Energy" 
-            value={stats.energy_stat} 
-            x={30} 
-            y={65} 
-            color="bg-gradient-to-r from-orange-500 to-red-500" 
-          />
-          <TreeNode 
-            label="Focus" 
-            value={stats.focus_stat} 
-            x={70} 
+            label="W-Core" 
+            value={stats.w_core_stat} 
+            x={25} 
             y={65} 
             color="bg-gradient-to-r from-blue-500 to-cyan-500" 
           />
-
-          {/* Second tier - Combined growth */}
           <TreeNode 
-            label="Growth" 
-            value={Math.floor((stats.energy_stat + stats.focus_stat) / 2)} 
-            x={50} 
+            label="Mirror" 
+            value={stats.mirror_mind_stat} 
+            x={75} 
+            y={65} 
+            color="bg-gradient-to-r from-purple-500 to-pink-500" 
+          />
+
+          {/* Emotional stats */}
+          <TreeNode 
+            label="RealFeels" 
+            value={stats.real_feels_stat} 
+            x={15} 
             y={45} 
             color="bg-gradient-to-r from-green-500 to-emerald-500" 
           />
-
-          {/* Top tier - Empathy & Confidence */}
           <TreeNode 
-            label="Wisdom" 
-            value={Math.floor((stats.empathy_stat + stats.confidence_stat) / 2)} 
-            x={50} 
-            y={25} 
+            label="VybeChek" 
+            value={stats.vybe_chek_stat} 
+            x={35} 
+            y={45} 
+            color="bg-gradient-to-r from-orange-500 to-red-500" 
+          />
+
+          {/* Action stats */}
+          <TreeNode 
+            label="ClutchUp" 
+            value={stats.clutch_up_stat} 
+            x={65} 
+            y={45} 
             color="bg-gradient-to-r from-yellow-500 to-orange-500" 
           />
-
-          {/* Floating stats */}
           <TreeNode 
-            label="Empathy" 
-            value={stats.empathy_stat} 
-            x={20} 
-            y={30} 
-            color="bg-gradient-to-r from-pink-500 to-rose-500" 
+            label="Comeback" 
+            value={stats.comeback_season_stat} 
+            x={85} 
+            y={45} 
+            color="bg-gradient-to-r from-indigo-500 to-purple-500" 
+          />
+
+          {/* Top tier - Wisdom */}
+          <TreeNode 
+            label="Wisdom" 
+            value={Math.floor((stats.moralus_stat + stats.head_space_stat + stats.scene_sense_stat) / 3)} 
+            x={50} 
+            y={25} 
+            color="bg-gradient-to-r from-amber-500 to-yellow-500" 
+          />
+
+          {/* Floating wisdom stats */}
+          <TreeNode 
+            label="Moralus" 
+            value={stats.moralus_stat} 
+            x={25} 
+            y={20} 
+            color="bg-gradient-to-r from-rose-500 to-pink-500" 
           />
           <TreeNode 
-            label="Confidence" 
-            value={stats.confidence_stat} 
-            x={80} 
-            y={30} 
+            label="HeadSpace" 
+            value={stats.head_space_stat} 
+            x={50} 
+            y={10} 
+            color="bg-gradient-to-r from-teal-500 to-cyan-500" 
+          />
+          <TreeNode 
+            label="SceneSense" 
+            value={stats.scene_sense_stat} 
+            x={75} 
+            y={20} 
             color="bg-gradient-to-r from-violet-500 to-purple-500" 
           />
         </Card>
 
-        <div className="text-center mt-6 text-sm text-muted-foreground">
-          Your skills grow stronger as you progress through your journey
+        <div className="text-center text-sm text-muted-foreground">
+          Your skills grow stronger as you navigate life's challenges
         </div>
       </div>
     </div>

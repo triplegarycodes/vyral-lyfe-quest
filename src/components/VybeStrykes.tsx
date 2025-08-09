@@ -12,10 +12,15 @@ interface Scenario {
   choices: string[];
   correctChoice: number;
   statImpacts: {
-    focus: number;
-    energy: number;
-    empathy: number;
-    confidence: number;
+    wCore: number;
+    mirrorMind: number;
+    realFeels: number;
+    vybeChek: number;
+    moralus: number;
+    comebackSeason: number;
+    clutchUp: number;
+    headSpace: number;
+    sceneSense: number;
   };
 }
 
@@ -26,38 +31,129 @@ const scenarios: Scenario[] = [
     description: "It's midnight. You're doom-scrolling instead of sleeping. A test is tomorrow.",
     choices: [
       "Keep scrolling, you can't sleep anyway",
-      "Put phone away and try meditation",
-      "Study for the test instead",
-      "Text friends about tomorrow"
+      "Put phone down and try some breathing exercises",
+      "Get up and review notes for 20 mins max",
+      "Text your study group for last-minute help"
     ],
     correctChoice: 1,
-    statImpacts: { focus: 5, energy: -5, empathy: 0, confidence: 5 }
+    statImpacts: { wCore: -10, mirrorMind: 0, realFeels: -5, vybeChek: -5, moralus: -5, comebackSeason: 0, clutchUp: 15, headSpace: 5, sceneSense: 10 }
   },
   {
     id: 2,
     title: "Pop Quiz Panic",
     description: "You're hit with a surprise quiz in your hardest class. You only studied for a different subject.",
     choices: [
-      "Panic and leave the quiz blank",
-      "Try your best with what you know",
-      "Look at your neighbor's paper",
-      "Ask the teacher for extra time"
+      "Panic and leave half the quiz blank",
+      "Take a deep breath and write what you know",
+      "Try to peek at someone else's answers",
+      "Ask to use the bathroom and Google stuff"
     ],
     correctChoice: 1,
-    statImpacts: { focus: 10, energy: 0, empathy: 0, confidence: 10 }
+    statImpacts: { wCore: -5, mirrorMind: -10, realFeels: 0, vybeChek: -5, moralus: -5, comebackSeason: 0, clutchUp: 10, headSpace: 15, sceneSense: 5 }
   },
   {
     id: 3,
+    title: "Mind Blank During Presentation",
+    description: "You're mid-sentence in front of the class and suddenly forget everything.",
+    choices: [
+      "Freeze up and stand there awkwardly",
+      "Say 'let me gather my thoughts' and take a moment",
+      "Make a joke about blanking out",
+      "Pretend you're done and sit down"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -5, mirrorMind: -5, realFeels: -5, vybeChek: -5, moralus: -5, comebackSeason: -10, clutchUp: 10, headSpace: 10, sceneSense: 10 }
+  },
+  {
+    id: 4,
+    title: "The Misread Text",
+    description: "You text someone a joke. They misinterpret it and get upset.",
+    choices: [
+      "Double down and say they're being too sensitive",
+      "Immediately apologize and explain what you meant",
+      "Leave them on read until they get over it",
+      "Send a bunch of crying laughing emojis"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -10, mirrorMind: -5, realFeels: -10, vybeChek: 15, moralus: 5, comebackSeason: 10, clutchUp: -10, headSpace: -5, sceneSense: -10 }
+  },
+  {
+    id: 5,
     title: "Group Chat Blowup",
     description: "Your group chat is imploding with drama and your name gets mentioned.",
     choices: [
-      "Jump in and defend yourself",
-      "Leave the group chat",
-      "Address it privately with individuals",
-      "Screenshot everything for evidence"
+      "Jump in swinging and defend yourself",
+      "Mute the chat and deal with it later",
+      "DM the people involved privately",
+      "Screenshot everything for receipts"
     ],
     correctChoice: 2,
-    statImpacts: { focus: 5, energy: 0, empathy: 10, confidence: 5 }
+    statImpacts: { wCore: -5, mirrorMind: -5, realFeels: -5, vybeChek: -10, moralus: -5, comebackSeason: -10, clutchUp: 10, headSpace: 10, sceneSense: 10 }
+  },
+  {
+    id: 6,
+    title: "They Ghosted You",
+    description: "A close friend stops talking to you with no explanation.",
+    choices: [
+      "Spam them with 'why are you ignoring me' texts",
+      "Give them space and check in once genuinely",
+      "Talk to mutual friends to find out what's up",
+      "Post subliminal stories about fake friends"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -5, mirrorMind: -10, realFeels: -5, vybeChek: 15, moralus: 10, comebackSeason: 10, clutchUp: -5, headSpace: -5, sceneSense: -5 }
+  },
+  {
+    id: 7,
+    title: "Too Fast, Too Soon",
+    description: "Someone you like starts pushing you to open up fast emotionally or physically.",
+    choices: [
+      "Go along with it so they don't lose interest",
+      "Be honest about wanting to take things slower",
+      "Ghost them because it's too awkward to discuss",
+      "Make excuses but don't directly address it"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -10, mirrorMind: -5, realFeels: -10, vybeChek: 5, moralus: 5, comebackSeason: 10, clutchUp: -10, headSpace: -5, sceneSense: -10 }
+  },
+  {
+    id: 8,
+    title: "Caught Between Two Crushes",
+    description: "You're vibing with two different people at the same time.",
+    choices: [
+      "Keep both options open and see what happens",
+      "Be upfront with both about the situation",
+      "Pick one and cut contact with the other",
+      "String them both along until you decide"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -5, mirrorMind: -5, realFeels: -5, vybeChek: -10, moralus: -5, comebackSeason: -10, clutchUp: 10, headSpace: 10, sceneSense: 15 }
+  },
+  {
+    id: 9,
+    title: "Breakup in Public",
+    description: "Someone breaks up with you in front of people at lunch.",
+    choices: [
+      "Cause a scene and yell at them",
+      "Keep your composure and ask to talk privately",
+      "Walk away without saying anything",
+      "Cry right there in front of everyone"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -5, mirrorMind: -15, realFeels: -5, vybeChek: 10, moralus: 15, comebackSeason: 5, clutchUp: -5, headSpace: -5, sceneSense: -5 }
+  },
+  {
+    id: 10,
+    title: "Everyone Else Got In",
+    description: "You're the only one who didn't make the team or club.",
+    choices: [
+      "Trash talk the team/club to make yourself feel better",
+      "Congratulate your friends and find other opportunities",
+      "Isolate yourself because it's too embarrassing",
+      "Demand to know why you weren't chosen"
+    ],
+    correctChoice: 1,
+    statImpacts: { wCore: -5, mirrorMind: -5, realFeels: -10, vybeChek: 5, moralus: 10, comebackSeason: 10, clutchUp: -10, headSpace: -5, sceneSense: -15 }
   }
 ];
 
@@ -84,16 +180,21 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profile) {
         await supabase
           .from('profiles')
           .update({
-            focus_stat: Math.max(0, Math.min(100, (profile.focus_stat || 0) + impacts.focus)),
-            energy_stat: Math.max(0, Math.min(100, (profile.energy_stat || 0) + impacts.energy)),
-            empathy_stat: Math.max(0, Math.min(100, (profile.empathy_stat || 0) + impacts.empathy)),
-            confidence_stat: Math.max(0, Math.min(100, (profile.confidence_stat || 0) + impacts.confidence)),
+            w_core_stat: Math.max(0, Math.min(100, (profile.w_core_stat || 50) + impacts.wCore)),
+            mirror_mind_stat: Math.max(0, Math.min(100, (profile.mirror_mind_stat || 50) + impacts.mirrorMind)),
+            real_feels_stat: Math.max(0, Math.min(100, (profile.real_feels_stat || 50) + impacts.realFeels)),
+            vybe_chek_stat: Math.max(0, Math.min(100, (profile.vybe_chek_stat || 50) + impacts.vybeChek)),
+            moralus_stat: Math.max(0, Math.min(100, (profile.moralus_stat || 50) + impacts.moralus)),
+            comeback_season_stat: Math.max(0, Math.min(100, (profile.comeback_season_stat || 50) + impacts.comebackSeason)),
+            clutch_up_stat: Math.max(0, Math.min(100, (profile.clutch_up_stat || 50) + impacts.clutchUp)),
+            head_space_stat: Math.max(0, Math.min(100, (profile.head_space_stat || 50) + impacts.headSpace)),
+            scene_sense_stat: Math.max(0, Math.min(100, (profile.scene_sense_stat || 50) + impacts.sceneSense)),
             total_xp: (profile.total_xp || 0) + 10
           })
           .eq('user_id', user.id);
@@ -108,10 +209,15 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
     
     const isCorrect = choiceIndex === scenario.correctChoice;
     const impacts = isCorrect ? scenario.statImpacts : {
-      focus: Math.floor(scenario.statImpacts.focus / 2),
-      energy: Math.floor(scenario.statImpacts.energy / 2),
-      empathy: Math.floor(scenario.statImpacts.empathy / 2),
-      confidence: Math.floor(scenario.statImpacts.confidence / 2)
+      wCore: Math.floor(scenario.statImpacts.wCore / 2),
+      mirrorMind: Math.floor(scenario.statImpacts.mirrorMind / 2),
+      realFeels: Math.floor(scenario.statImpacts.realFeels / 2),
+      vybeChek: Math.floor(scenario.statImpacts.vybeChek / 2),
+      moralus: Math.floor(scenario.statImpacts.moralus / 2),
+      comebackSeason: Math.floor(scenario.statImpacts.comebackSeason / 2),
+      clutchUp: Math.floor(scenario.statImpacts.clutchUp / 2),
+      headSpace: Math.floor(scenario.statImpacts.headSpace / 2),
+      sceneSense: Math.floor(scenario.statImpacts.sceneSense / 2)
     };
 
     if (isCorrect) {
