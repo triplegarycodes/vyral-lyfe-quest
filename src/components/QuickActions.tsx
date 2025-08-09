@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Target, BookOpen, Gamepad2, TrendingUp } from "lucide-react";
+import { Plus, Target, Gamepad2, TrendingUp } from "lucide-react";
 
 const QuickActions = () => {
   const actions = [
@@ -8,23 +8,20 @@ const QuickActions = () => {
       icon: Target,
       label: "Daily Goal",
       description: "Set today's focus",
-      onClick: () => console.log("Goal"),
-      gradient: "from-purple-500 to-pink-500"
+      onClick: () => console.log("Goal")
     },
     {
       icon: Gamepad2,
       label: "VybeStrike",
       description: "Level up challenge",
-      onClick: () => console.log("Game"),
-      gradient: "from-green-500 to-teal-500"
+      onClick: () => console.log("Game")
     },
     {
       icon: TrendingUp,
       label: "VybeTree",
       description: "Check progress",
-      onClick: () => console.log("Tree"),
-      gradient: "from-orange-500 to-yellow-500"
-    },
+      onClick: () => console.log("Tree")
+    }
   ];
 
   return (
@@ -43,18 +40,16 @@ const QuickActions = () => {
             <Button
               key={action.label}
               variant="ghost"
-              className="h-20 p-4 flex flex-col items-center gap-2 hover:bg-secondary/50 group transition-all duration-300 hover:scale-105"
+              className="h-20 p-4 flex flex-col items-center gap-2 bg-gradient-to-br from-vy.pop to-vy.neon rounded-2xl shadow-lg text-vy.ink transform transition-transform duration-300 hover:rotate-2 hover:scale-105 hover:shadow-xl"
               onClick={action.onClick}
               style={{
                 animationDelay: `${index * 100}ms`
               }}
             >
-              <div className={`p-2 rounded-lg bg-gradient-to-r ${action.gradient} group-hover:scale-110 transition-transform duration-200`}>
-                <Icon className="w-5 h-5 text-white" />
-              </div>
+              <Icon className="w-5 h-5" />
               <div className="text-center">
-                <div className="text-sm font-medium text-foreground">{action.label}</div>
-                <div className="text-xs text-muted-foreground">{action.description}</div>
+                <div className="text-sm font-medium">{action.label}</div>
+                <div className="text-xs opacity-80">{action.description}</div>
               </div>
             </Button>
           );

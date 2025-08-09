@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { ProgressRing } from "@/components/ui/ProgressRing";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -171,7 +171,9 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
 
   const scenario = scenarios[currentScenario];
 
-  const updateStats = async (impacts: any) => {
+  type StatImpacts = Scenario["statImpacts"];
+
+  const updateStats = async (impacts: StatImpacts) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -288,7 +290,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
             <span className="text-sm text-muted-foreground">
               Scenario {currentScenario + 1} of {scenarios.length}
             </span>
-            <Progress value={(currentScenario / scenarios.length) * 100} className="flex-1" />
+            <ProgressRing progress={(currentScenario / scenarios.length) * 100} />
             <span className="text-sm font-medium">Score: {score}</span>
           </div>
 
