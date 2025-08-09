@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Palette, RotateCcw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ColorScheme {
   name: string;
@@ -44,40 +45,75 @@ const ThemeCustomizer = () => {
   const [currentScheme, setCurrentScheme] = useState(predefinedSchemes[0]);
   const [customHue, setCustomHue] = useState([200]);
 
-  const applyColorScheme = (scheme: ColorScheme) => {
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  const savePreference = async (theme: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase
+      .from('user_preferences')
+      .upsert({ user_id: user.id, theme_gradient: theme }, { onConflict: 'user_id' });
+  };
+
+  const applyColorScheme = async (scheme: ColorScheme, themeName: string = scheme.name) => {
     const root = document.documentElement;
     root.style.setProperty('--primary', scheme.primary);
     root.style.setProperty('--accent', scheme.accent);
     root.style.setProperty('--primary-glow', scheme.primaryGlow);
-    
-    // Update gradients
+
     const [h1] = scheme.primaryGlow.split(' ');
     const [h2] = scheme.primary.split(' ');
     const h3 = parseInt(h2) - 20;
-    
-    root.style.setProperty('--gradient-primary', 
+
+    root.style.setProperty('--gradient-primary',
       `linear-gradient(135deg, hsl(${scheme.primaryGlow}), hsl(${scheme.primary}), hsl(${h3} 100% 45%))`
     );
-    root.style.setProperty('--gradient-accent', 
+    root.style.setProperty('--gradient-accent',
       `linear-gradient(135deg, hsl(${scheme.accent}), hsl(${parseInt(scheme.accent.split(' ')[0]) + 10} 100% 50%))`
     );
-    
+
     setCurrentScheme(scheme);
+    await savePreference(themeName);
   };
 
-  const applyCustomHue = (hue: number) => {
+  const applyCustomHue = async (hue: number) => {
     const customScheme: ColorScheme = {
       name: "Custom",
       primary: `${hue} 100% 50%`,
       accent: `${(hue + 70) % 360} 100% 60%`,
       primaryGlow: `${(hue - 20 + 360) % 360} 100% 60%`
     };
-    applyColorScheme(customScheme);
+    await applyColorScheme(customScheme, `custom:${hue}`);
   };
 
-  const resetToDefault = () => {
-    applyColorScheme(predefinedSchemes[0]);
+  const resetToDefault = async () => {
+    await applyColorScheme(predefinedSchemes[0]);
     setCustomHue([200]);
+  };
+
+  const loadPreferences = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from('user_preferences')
+      .select('theme_gradient')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    const theme = data?.theme_gradient;
+    if (theme) {
+      if (theme.startsWith('custom:')) {
+        const hue = parseInt(theme.split(':')[1], 10);
+        setCustomHue([hue]);
+        await applyCustomHue(hue);
+      } else {
+        const scheme = predefinedSchemes.find(s => s.name === theme);
+        if (scheme) {
+          await applyColorScheme(scheme);
+        }
+      }
+    }
   };
 
   if (!isOpen) {

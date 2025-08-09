@@ -1,11 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Zap, Brain, Smile, Meh, Frown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const MoodTracker = () => {
   const [selectedMood, setSelectedMood] = useState<string>("");
-  
+  const [weekData, setWeekData] = useState<{ day: string; mood: string }[]>([]);
+
   const moods = [
     { id: "amazing", icon: Smile, label: "Amazing", color: "text-green-400" },
     { id: "good", icon: Heart, label: "Good", color: "text-blue-400" },
@@ -14,15 +17,83 @@ const MoodTracker = () => {
     { id: "stressed", icon: Zap, label: "Stressed", color: "text-red-400" },
   ];
 
-  const weekData = [
-    { day: "Mon", mood: "good" },
-    { day: "Tue", mood: "amazing" },
-    { day: "Wed", mood: "okay" },
-    { day: "Thu", mood: "good" },
-    { day: "Fri", mood: "amazing" },
-    { day: "Sat", mood: "good" },
-    { day: "Sun", mood: "" }, // Today
-  ];
+  useEffect(() => {
+    loadMoodData();
+  }, []);
+
+  const loadMoodData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const today = new Date();
+      const dates = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(today);
+        d.setDate(today.getDate() - (6 - i));
+        return d;
+      });
+
+      const start = dates[0].toISOString().split('T')[0];
+      const end = dates[6].toISOString().split('T')[0];
+
+      const { data, error } = await supabase
+        .from('mood_entries')
+        .select('mood, date')
+        .eq('user_id', user.id)
+        .gte('date', start)
+        .lte('date', end);
+
+      if (error) {
+        console.error('Error loading moods:', error);
+        return;
+      }
+
+      const map = new Map<string, string>();
+      data?.forEach(entry => {
+        map.set(entry.date, entry.mood);
+      });
+
+      setWeekData(
+        dates.map(d => ({
+          day: d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 3),
+          mood: map.get(d.toISOString().split('T')[0]) || '',
+        }))
+      );
+      setSelectedMood(map.get(end) || '');
+    } catch (error) {
+      console.error('Error fetching mood data:', error);
+    }
+  };
+
+  const handleMoodSelect = async (moodId: string) => {
+    setSelectedMood(moodId);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const today = new Date().toISOString().split('T')[0];
+
+      await supabase
+        .from('mood_entries')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('date', today);
+
+      const { error } = await supabase
+        .from('mood_entries')
+        .insert({ user_id: user.id, mood: moodId, date: today });
+
+      if (error) {
+        toast.error('Failed to save mood');
+        return;
+      }
+
+      toast.success('Mood saved');
+      loadMoodData();
+    } catch (error) {
+      console.error('Error saving mood:', error);
+    }
+  };
 
   return (
     <Card className="vyral-card animate-fade-in">
@@ -47,7 +118,7 @@ const MoodTracker = () => {
                       ? "vyral-button-primary" 
                       : "hover:bg-secondary/50"
                   }`}
-                  onClick={() => setSelectedMood(mood.id)}
+                  onClick={() => handleMoodSelect(mood.id)}
                 >
                   <Icon className={`w-5 h-5 ${mood.color}`} />
                   <span className="text-xs">{mood.label}</span>
