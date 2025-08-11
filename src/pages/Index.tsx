@@ -166,7 +166,11 @@ const Index = () => {
             <MoodTracker />
           </div>
           <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-            <QuickActions />
+            <QuickActions
+              onDailyGoal={() => setCurrentView('vybestryke')}
+              onVybeStrike={() => setCurrentGame('vybestryke')}
+              onVybeTree={() => setCurrentView('vybetree')}
+            />
           </div>
         </div>
       </div>

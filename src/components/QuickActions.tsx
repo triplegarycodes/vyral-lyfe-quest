@@ -1,29 +1,35 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Target, BookOpen, Gamepad2, TrendingUp } from "lucide-react";
+import { Plus, Target, Gamepad2, TrendingUp } from "lucide-react";
 
-const QuickActions = () => {
+interface QuickActionsProps {
+  onDailyGoal: () => void;
+  onVybeStrike: () => void;
+  onVybeTree: () => void;
+}
+
+const QuickActions = ({ onDailyGoal, onVybeStrike, onVybeTree }: QuickActionsProps) => {
   const actions = [
     {
       icon: Target,
       label: "Daily Goal",
       description: "Set today's focus",
-      onClick: () => console.log("Goal"),
-      gradient: "from-purple-500 to-pink-500"
+      onClick: onDailyGoal,
+      gradient: "from-purple-500 to-pink-500",
     },
     {
       icon: Gamepad2,
       label: "VybeStrike",
       description: "Level up challenge",
-      onClick: () => console.log("Game"),
-      gradient: "from-green-500 to-teal-500"
+      onClick: onVybeStrike,
+      gradient: "from-green-500 to-teal-500",
     },
     {
       icon: TrendingUp,
       label: "VybeTree",
       description: "Check progress",
-      onClick: () => console.log("Tree"),
-      gradient: "from-orange-500 to-yellow-500"
+      onClick: onVybeTree,
+      gradient: "from-orange-500 to-yellow-500",
     },
   ];
 

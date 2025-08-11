@@ -24,17 +24,24 @@ const VentingScreen = () => {
   }, []);
 
   const fetchPosts = async () => {
-    // For now, using local storage until database migration is complete
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      
-      const storedPosts = localStorage.getItem(`venting_posts_${user.id}`);
-      if (storedPosts) {
-        setPosts(JSON.parse(storedPosts));
+
+      const { data, error } = await supabase
+        .from('venting_posts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading posts:', error);
+        return;
       }
+
+      setPosts(data || []);
     } catch (error) {
-      console.log("Using local storage for now");
+      console.error('Error fetching posts:', error);
     }
   };
 
@@ -53,21 +60,17 @@ const VentingScreen = () => {
         return;
       }
 
-      // For now, using local storage until database migration is complete
-      const newPostObj = {
-        id: Date.now().toString(),
-        content: newPost.trim(),
-        created_at: new Date().toISOString()
-      };
+      const { error } = await supabase
+        .from('venting_posts')
+        .insert({ user_id: user.id, content: newPost.trim() });
 
-      const storedPosts = localStorage.getItem(`venting_posts_${user.id}`);
-      const existingPosts = storedPosts ? JSON.parse(storedPosts) : [];
-      const updatedPosts = [newPostObj, ...existingPosts];
-      
-      localStorage.setItem(`venting_posts_${user.id}`, JSON.stringify(updatedPosts));
-      
-      toast.success("Post created successfully");
-      setNewPost("");
+      if (error) {
+        toast.error('Failed to create post');
+        return;
+      }
+
+      toast.success('Post created successfully');
+      setNewPost('');
       fetchPosts();
     } catch (error) {
       toast.error("An unexpected error occurred");
