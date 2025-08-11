@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -169,6 +172,131 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
   const [characterReaction, setCharacterReaction] = useState("");
   const { toast } = useToast();
 
+  // Quick VybeStrike & Teen-safe submission (from landing prototype)
+  const [quickScenarios, setQuickScenarios] = useState<string[]>([
+    '2‑minute deep breath, then organize your backpack for tomorrow.',
+    '15 pushups or 1 minute plank. Right now. No vibe‑checking, just do.',
+    'Write the title + first sentence of your AP Lang essay.',
+    'Drink a full glass of water and stretch your calves for 60 seconds.',
+    'Text a friend “gym tomorrow?” and set a 7:00 pm reminder.',
+    'Open Spotify, start your “focus” playlist, 10‑minute Spanish on Duolingo.',
+    'Skim Civics notes and make 1 flashcard (just one).',
+    'Delete 10 photos you don’t need. Digital spring clean.',
+    'Go for a 5‑minute walk loop. Phone stays in pocket.',
+    'Tidy your desk surface. 120 seconds. Beat the clock.'
+  ]);
+  const [currentQuick, setCurrentQuick] = useState<string>("");
+  const [submissionText, setSubmissionText] = useState("");
+
+  const LEX = {
+    hardBlock: [
+      'suicide','self harm','self-harm','kill','murder','sexual assault','assault','rape','porn','nude','slur','racist',
+      'homophobic','transphobic','kys','die','overdose','nsfw'
+    ],
+    pg13: [
+      'alcohol','drunk','vape','nicotine','drug','weapon','violence','blood','gore','threat','curse','swear'
+    ],
+    mild: [
+      'dang','heck','stupid','hate'
+    ]
+  } as const;
+
+  const L33T: Record<string,string> = { '0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','$':'s','!':'i' };
+  function normalize(s: string){
+    return s
+      .toLowerCase()
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/[0-9@!$]/g, ch => L33T[ch] || ch)
+      .replace(/[^a-z\s]/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+
+  type Safety = { level: 'none' | 'block' | 'pg13' | 'pg'; label: string; pill: '' | 'pg' | 'pg13' | 'warn'; emoji: string };
+  function classify(text: string): Safety{
+    const n = normalize(text);
+    if(!n) return {level:'none', label:'—', pill:'', emoji:'—'};
+    const hit = (arr: readonly string[]) => arr.find(w => new RegExp(`(^| )${w}( |$)`).test(n));
+    if(hit(LEX.hardBlock)) return {level:'block', label:'Safety: low', pill:'warn', emoji:'⛔'};
+    if(hit(LEX.pg13)) return {level:'pg13', label:'Safety: caution', pill:'pg13', emoji:'🟠 PG‑13'};
+    if(hit(LEX.mild)) return {level:'pg', label:'Safety: good', pill:'pg', emoji:'🟢 PG'};
+    if(n.split(' ').length > 30) return {level:'pg13', label:'Safety: caution (long)', pill:'pg13', emoji:'🟠 PG‑13'};
+    return {level:'pg', label:'Safety: good', pill:'pg', emoji:'🟢 PG'};
+  }
+
+  const CLEAN_MAP = new Map<string,string>([
+    ['kill','eliminate'],
+    ['weapon','gear'],
+    ['drug','caffeine'],
+    ['alcohol','sparkling juice'],
+    ['vape','deep breath'],
+    ['nicotine','peppermint'],
+    ['violence','competition'],
+    ['blood','sweat'],
+    ['gore','mud'],
+    ['threat','challenge'],
+    ['suicide','quit‑thoughts'],
+    ['self harm','self‑doubt'],
+    ['porn','pop culture'],
+    ['nude','art'],
+    ['slur','trash talk']
+  ]);
+  function suggestCleanRewrite(text: string){
+    let n = normalize(text);
+    [...LEX.hardBlock, ...LEX.pg13].forEach(w => {
+      const safe = CLEAN_MAP.get(w) || '—';
+      n = n.replace(new RegExp(`(^| )${w}( |$)`, 'g'), (m, a, b) => `${a}${safe}${b}`);
+    });
+    if(n && !/[.!?]$/.test(n)) n += '.';
+    return n.charAt(0).toUpperCase() + n.slice(1);
+  }
+
+  const rollQuick = () => {
+    const i = Math.floor(Math.random() * quickScenarios.length);
+    setCurrentQuick(quickScenarios[i]);
+  };
+
+  const markQuickDone = () => {
+    if(!currentQuick){
+      toast({ title: 'Roll a scenario first!' });
+    } else {
+      toast({ title: 'Nice. +1 micro‑win.' });
+    }
+  };
+
+  useEffect(() => {
+    const SHEET_ID = '1-Wki-ElEbMIW75FupThB55nsg_SkhfSqYyxK0biw4lw';
+    const GID = '369807428';
+    async function fetchSheetScenarios(){
+      try{
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
+        const res = await fetch(url, {mode:'cors'});
+        const text = await res.text();
+        const match = text.match(/\{[\s\S]*\}/);
+        if(!match) return;
+        const json = JSON.parse(match[0]);
+        const rows = json.table.rows || [];
+        const list: string[] = rows
+          .map((r: any) => (r.c?.[0]?.v || '').toString().trim())
+          .filter(Boolean)
+          .filter(s => classify(s).level !== 'block');
+        if(list.length){
+          setQuickScenarios(prev => {
+            const set = new Set(prev);
+            let changed = false;
+            list.forEach(s => { if(!set.has(s)){ set.add(s); changed = true; } });
+            return changed ? Array.from(set) : prev;
+          });
+          toast({ title: `Loaded ${list.length} scenarios from sheet.` });
+        }
+      } catch(err){
+        console.warn('Sheet fetch failed', err);
+      }
+    }
+    fetchSheetScenarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const scenario = scenarios[currentScenario];
 
   const updateStats = async (impacts: any) => {
@@ -255,21 +383,75 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
 
   if (gameComplete) {
     return (
-      <Card className="vyral-card animate-fade-in text-center p-8">
-        <div className="space-y-6">
-          <div className="text-6xl animate-bounce">🎉</div>
-          <h2 className="text-2xl font-bold vyral-text-glow">Game Complete!</h2>
-          <p className="text-lg">You scored {score} out of {scenarios.length}</p>
-          <div className="space-y-3">
-            <Button onClick={resetGame} className="vyral-button-primary">
-              Play Again
-            </Button>
-            <Button variant="outline" onClick={onBack}>
-              Back to Games
-            </Button>
+      <div className="space-y-6">
+        <Card className="vyral-card animate-fade-in text-center p-8">
+          <div className="space-y-6">
+            <div className="text-6xl animate-bounce">🎉</div>
+            <h2 className="text-2xl font-bold vyral-text-glow">Game Complete!</h2>
+            <p className="text-lg">You scored {score} out of {scenarios.length}</p>
+            <div className="space-y-3">
+              <Button onClick={resetGame} className="vyral-button-primary">
+                Play Again
+              </Button>
+              <Button variant="outline" onClick={onBack}>
+                Back to Games
+              </Button>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+
+        {/* Quick VybeStrike */}
+        <Card className="vyral-card">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold vyral-text-glow">VybeStrike (Quick)</h3>
+            </div>
+            <div className="border border-dashed border-border/50 rounded-lg p-4 text-center min-h-16 flex items-center justify-center text-sm">
+              {currentQuick || 'Press roll to get a scenario.'}
+            </div>
+            <div className="flex gap-2 justify-center">
+              <Button onClick={rollQuick} className="vyral-button-primary">🎲 Roll Scenario</Button>
+              <Button variant="outline" onClick={markQuickDone}>✔ Mark Done</Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Submission (Teen‑safe) */}
+        <Card className="vyral-card">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold vyral-text-glow">Submit a Scenario</h3>
+            <p className="text-sm text-muted-foreground">Keep it fun, short, and teen‑friendly. Our filter will nuke spicy words before they go live.</p>
+            <div className="space-y-2">
+              <Label htmlFor="scenarioInput">Your scenario</Label>
+              <Textarea id="scenarioInput" rows={3} placeholder='e.g., "One‑song cleanup sprint, then 10 pushups."' value={submissionText} onChange={(e)=>setSubmissionText(e.target.value)} />
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {(() => { const c = classify(submissionText); return (
+                <>
+                  <Badge variant={c.level === 'block' ? 'destructive' : 'secondary'} className="text-xs">{c.label}</Badge>
+                  <Badge variant={c.pill === 'pg' ? 'default' : 'outline'} className="text-xs">{c.emoji}</Badge>
+                </>
+              ); })()}
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              <Button onClick={() => {
+                const text = submissionText.trim();
+                const c = classify(text);
+                if(!text){ return toast({ title: 'Please enter a scenario.' }); }
+                if(c.level === 'block'){ return toast({ title: 'Contains unsafe language. Try the clean rewrite.' }); }
+                setQuickScenarios(prev => [...prev, text]);
+                setSubmissionText('');
+                toast({ title: 'Submitted! Added to this session.' });
+              }} className="vyral-button-primary">Submit</Button>
+              <Button variant="outline" onClick={() => setSubmissionText(suggestCleanRewrite(submissionText))}>Suggest clean rewrite</Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">By submitting, you agree to keep it respectful and school‑safe. No harassment, slurs, or explicit content.</p>
+          </div>
+        </Card>
+      </div>
     );
   }
 

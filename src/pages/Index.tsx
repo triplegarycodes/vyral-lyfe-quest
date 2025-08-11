@@ -69,7 +69,19 @@ const Index = () => {
       toast.error("An unexpected error occurred");
     }
   };
-
+ 
+  useEffect(() => {
+    // SEO: Set title and meta description
+    document.title = "Vyral • Level up your day";
+    const desc = "Vyral: a playful, productivity‑meets‑wellness toolkit for students.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'description');
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', desc);
+  }, []);
   // Show loading screen
   if (loading || showLoadingScreen) {
     return <LoadingScreen />;
