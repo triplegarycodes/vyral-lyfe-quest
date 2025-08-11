@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vyral • Level up your day</title>
+  <meta name="description" content="Vyral: a playful, productivity‑meets‑wellness toolkit for students." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --bg: #0f1115; /* dark */
+  --bg-soft: #151821;
+  --tx: #e8ecf1;
+  --tx-dim: #aab3c0;
+  --primary: #6ee7ff;
+  --primary-2: #a78bfa;
+  --card: #0f1420;
+  --ring: rgba(110,231,255,.35);
+}
+:root.light{
+  --bg: #f7f8fb; /* light */
+  --bg-soft: #eef1f7;
+  --tx: #111316;
+  --tx-dim: #4b5563;
+  --primary: #2563eb;
+  --primary-2: #7c3aed;
+  --card: #ffffff;
+  --ring: rgba(37,99,235,.25);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background: radial-gradient(1200px 600px at 80% -20%, rgba(167,139,250,.15), transparent),
+              radial-gradient(900px 400px at -10% 10%, rgba(110,231,255,.12), transparent),
+              var(--bg);
+  color:var(--tx); line-height:1.6;
+}
+.container{max-width:1100px;margin:auto;padding:0 1rem}
+
+/* Nav */
+.nav{position:sticky;top:0;background:color-mix(in oklab, var(--bg) 92%, transparent);backdrop-filter: blur(8px);border-bottom:1px solid rgba(255,255,255,.06);z-index:50}
+.nav__inner{display:flex;align-items:center;gap:.75rem;padding:.75rem 0}
+.logo{font-weight:800;letter-spacing:.5px;text-decoration:none;color:var(--tx)}
+.nav__links{display:flex;gap:1rem}
+.nav__links a{color:var(--tx-dim);text-decoration:none}
+.nav__links a:hover{color:var(--tx)}
+.nav__actions{margin-left:auto;display:flex;gap:.5rem}
+.nav__menu{display:none;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--tx);border-radius:10px;padding:.25rem .5rem}
+
+/* Buttons */
+.btn{appearance:none;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--tx);padding:.6rem .9rem;border-radius:14px;font-weight:600;cursor:pointer;transition:.2s ease;border-color:color-mix(in oklab, var(--tx) 15%, transparent)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px var(--ring)}
+.btn:active{transform:translateY(0)}
+.btn--primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));border-color:transparent;color:#0b0d12}
+.btn--ghost{border-color:rgba(255,255,255,.18)}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;align-items:center;padding:5rem 1rem}
+.lead{font-size:1.1rem;color:var(--tx-dim)}
+.hero__art{position:relative;min-height:320px}
+.orb{position:absolute;filter:blur(30px);opacity:.7;border-radius:50%}
+.orb--a{width:220px;height:220px;background:radial-gradient(circle at 30% 30%, var(--primary), transparent 60%);right:8%;top:10%}
+.orb--b{width:160px;height:160px;background:radial-gradient(circle at 60% 60%, var(--primary-2), transparent 60%);left:4%;bottom:4%}
+.preview{position:absolute;right:0;bottom:0;width:min(100%,360px)}
+.gradient-text{background:linear-gradient(90deg,var(--primary) 0%, var(--primary-2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Cards */
+.card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:1.1rem;box-shadow:0 10px 30px -15px rgba(0,0,0,.6)}
+.section-title{font-size:1.8rem;margin:0 0 1rem}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.feature h3{margin:.2rem 0 .4rem}
+
+/* Progress */
+.progress{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:.8rem}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2))}
+
+/* VybeStrike */
+.vybestrike{margin:3rem auto}
+.vs__head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+.vs__display{min-height:72px;display:flex;align-items:center;justify-content:center;border:1px dashed rgba(255,255,255,.15);border-radius:14px;padding:1rem;text-align:center;margin-bottom:.75rem;color:var(--tx)}
+.vs__actions{display:flex;gap:.5rem;justify-content:center}
+.toast{position:fixed;inset:auto 0 20px 0;margin:auto;width:fit-content;max-width:90%;background:var(--card);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:.5rem .9rem;opacity:0;transform:translateY(20px);transition:.25s ease;pointer-events:none;text-align:center}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Submission Form */
+.submission label{display:block;margin-top:.5rem;margin-bottom:.25rem;font-weight:600}
+.submission textarea{width:100%;padding:.5rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);resize:vertical;background:var(--bg-soft);color:var(--tx)}
+.submission textarea:focus{outline:2px solid var(--primary)}
+.submission__row{display:flex;align-items:center;gap:.75rem;margin-top:.6rem;flex-wrap:wrap}
+.safety{font-size:.9rem;padding:.35rem .6rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:var(--tx-dim)}
+.safety.good{border-color:rgba(16,185,129,.35);color:#10b981}
+.safety.warn{border-color:rgba(245,158,11,.35);color:#f59e0b}
+.safety.bad{border-color:rgba(239,68,68,.35);color:#ef4444}
+.safety-pill{font-size:.9rem;padding:.35rem .6rem;border-radius:999px;border:1px solid rgba(255,255,255,.15);}
+.safety-pill.pg{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.35)}
+.safety-pill.pg13{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35)}
+.safety-pill.warn{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35)}
+
+/* FAQ */
+.faq details{padding:.6rem 1rem}
+.faq summary{cursor:pointer;font-weight:600}
+
+/* CTA & Footer */
+.cta{margin:3rem auto;text-align:center}
+.footer{padding:2rem 1rem;text-align:center;color:var(--tx-dim)}
+
+/* Modal */
+.modal{border:none;background:transparent}
+.modal::backdrop{background:rgba(0,0,0,.45)}
+.modal__card{max-width:560px;margin:auto}
+.modal__actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:.75rem}
+
+/* Animations */
+.reveal{opacity:0;transform:translateY(12px);} 
+.reveal.visible{opacity:1;transform:none;transition:.6s cubic-bezier(.2,.8,.2,1)}
+.delay-1{transition-delay:.08s}
+.delay-2{transition-delay:.16s}
+.delay-3{transition-delay:.24s}
+.shimmer{position:relative;overflow:hidden}
+.shimmer::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0%, rgba(255,255,255,.15) 20%, transparent 40%);transform:translateX(-120%);animation:shimmer 3.2s infinite}
+@keyframes shimmer{to{transform:translateX(120%)}}
+
+/* Responsive */
+@media (max-width: 900px){
+  .hero{grid-template-columns:1fr;gap:1.5rem;padding:3.5rem 1rem}
+  .grid{grid-template-columns:1fr}
+  .nav__links{display:none}
+  .nav__menu{display:block;margin-left:.25rem}
+}
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="logo" href="#top">Vyral</a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#vybestrike">VybeStrike</a>
+        <a href="#submission">Submit</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav__actions">
+        <button id="themeToggle" class="btn btn--ghost" aria-label="Toggle theme">🌓</button>
+        <a class="btn btn--primary" href="#get-started">Get Started</a>
+      </div>
+      <button class="nav__menu" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="hero__copy">
+        <h1 class="gradient-text reveal">Make your habits go Vyral</h1>
+        <p class="lead reveal delay-1">Turn school, health, and hustle into repeatable wins with game‑like loops, streaks, and shareable progress.</p>
+        <div class="hero__cta reveal delay-2">
+          <a href="#vybestrike" class="btn btn--primary">Try a scenario</a>
+          <button class="btn btn--ghost" id="openAbout">What is Vyral?</button>
+        </div>
+      </div>
+      <div class="hero__art reveal delay-3" aria-hidden="true">
+        <div class="orb orb--a"></div>
+        <div class="orb orb--b"></div>
+        <div class="card preview shimmer">
+          <h3>Today’s Loop</h3>
+          <ul>
+            <li>Warm‑up jog • 10 min</li>
+            <li>AP Lang outline • 25 min</li>
+            <li>Practice Spanish • 10 min</li>
+          </ul>
+          <div class="progress"><span style="width:62%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features container">
+      <h2 class="section-title reveal">Why students vibe with Vyral</h2>
+      <div class="grid">
+        <article class="feature card reveal delay-1">
+          <h3>Loops, not lists</h3>
+          <p>Design repeatable routines that level up as you do. No more orphaned to‑dos.</p>
+        </article>
+        <article class="feature card reveal delay-2">
+          <h3>Smart streaks</h3>
+          <p>Breaks don’t break you. Our flexible streaks forgive rest days without nuking momentum.</p>
+        </article>
+        <article class="feature card reveal delay-3">
+          <h3>Social, on your terms</h3>
+          <p>Share wins with your circle. Opt‑in only. No cringe leaderboards.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- VybeStrike Widget -->
+    <section id="vybestrike" class="vybestrike container card">
+      <div class="vs__head">
+        <h2>VybeStrike</h2>
+        <p class="muted">Hit the button, get a scenario, lock a micro‑mission.</p>
+      </div>
+      <div class="vs__body">
+        <div class="vs__display" id="scenarioDisplay">Press roll to get a scenario.</div>
+        <div class="vs__actions">
+          <button id="rollScenario" class="btn btn--primary">🎲 Roll Scenario</button>
+          <button id="markDone" class="btn">✔ Mark Done</button>
+        </div>
+      </div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- Submission (Teen‑safe) -->
+    <section id="submission" class="submission container card reveal">
+      <h2 class="section-title">Submit a Scenario</h2>
+      <p class="muted">Keep it fun, short, and teen‑friendly. Our filter will nuke spicy words before they go live.</p>
+
+      <form id="submissionForm" class="submission__form" novalidate>
+        <label for="scenarioInput">Your scenario</label>
+        <textarea id="scenarioInput" rows="3" placeholder="e.g., &quot;One‑song cleanup sprint, then 10 pushups.&quot;"></textarea>
+
+        <div class="submission__row">
+          <span class="safety" id="safetyBadge" aria-live="polite">Safety: —</span>
+          <span class="safety-pill" id="ratingPill" aria-live="polite" title="Content guidance">—</span>
+        </div>
+
+        <div class="submission__row">
+          <button type="submit" class="btn btn--primary">Submit</button>
+          <button type="button" id="suggestClean" class="btn">Suggest clean rewrite</button>
+        </div>
+        <small class="muted">By submitting, you agree to keep it respectful and school‑safe. No harassment, slurs, or explicit content.</small>
+      </form>
+
+      <div class="toast" id="submissionToast" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq container">
+      <h2 class="section-title reveal">FAQ</h2>
+      <details class="card reveal">
+        <summary>Is this a to‑do app?</summary>
+        <p>It’s a loop app. Build repeatable patterns that compound into bigger wins.</p>
+      </details>
+      <details class="card reveal">
+        <summary>Does Vyral work offline?</summary>
+        <p>Yes. Your data syncs when you’re back online. No FOMO.</p>
+      </details>
+    </section>
+
+    <!-- CTA -->
+    <section id="get-started" class="cta container card reveal">
+      <h2>Ready to go Vyral?</h2>
+      <p>Clone this starter and ship your first loop today.</p>
+      <a href="#top" class="btn btn--primary">Back to top</a>
+    </section>
+  </main>
+
+  <!-- About Modal -->
+  <dialog id="aboutModal" class="modal">
+    <form method="dialog" class="modal__card card">
+      <h3>What is Vyral?</h3>
+      <p>Vyral turns habits into game loops with scenarios, streaks, and shareable progress. Built for students who juggle <em>everything</em>.</p>
+      <menu class="modal__actions">
+        <button class="btn" value="cancel">Close</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <footer class="footer container">
+    <small>© <span id="year"></span> Vyral. Built with 💡 and a little caffeine.</small>
+  </footer>
+
+  <script>
+/* Vyral UI – teen‑safe submissions + Google Sheet loader */
+const qs = (s, root=document) => root.querySelector(s);
+const qsa = (s, root=document) => [...root.querySelectorAll(s)];
+
+// Year
+qs('#year').textContent = new Date().getFullYear();
+
+// Theme toggle (persisted)
+const root = document.documentElement;
+const THEME_KEY = 'vyral:theme';
+function applyTheme(mode){
+  if(mode === 'light'){ root.classList.add('light'); } else { root.classList.remove('light'); }
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+qs('#themeToggle').addEventListener('click', () => {
+  const next = root.classList.contains('light') ? 'dark' : 'light';
+  applyTheme(next); localStorage.setItem(THEME_KEY, next);
+});
+
+// Mobile menu
+qs('#menuToggle').addEventListener('click', () => {
+  const links = qs('.nav__links');
+  const expanded = qs('#menuToggle').getAttribute('aria-expanded') === 'true';
+  qs('#menuToggle').setAttribute('aria-expanded', String(!expanded));
+  links.style.display = expanded ? 'none' : 'flex';
+});
+
+// About modal
+const modal = qs('#aboutModal');
+qs('#openAbout').addEventListener('click', () => modal.showModal());
+
+// Reveal-on-scroll
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+},{threshold:0.12});
+qsa('.reveal').forEach(el=>io.observe(el));
+
+// Default scenarios (local fallback)
+let scenarios = [
+  '2‑minute deep breath, then organize your backpack for tomorrow.',
+  '15 pushups or 1 minute plank. Right now. No vibe‑checking, just do.',
+  'Write the title + first sentence of your AP Lang essay.',
+  'Drink a full glass of water and stretch your calves for 60 seconds.',
+  'Text a friend “gym tomorrow?” and set a 7:00 pm reminder.',
+  'Open Spotify, start your “focus” playlist, 10‑minute Spanish on Duolingo.',
+  'Skim Civics notes and make 1 flashcard (just one).',
+  'Delete 10 photos you don’t need. Digital spring clean.',
+  'Go for a 5‑minute walk loop. Phone stays in pocket.',
+  'Tidy your desk surface. 120 seconds. Beat the clock.'
+];
+
+// VybeStrike UI
+const display = qs('#scenarioDisplay');
+const toast = qs('#toast');
+function showToast(msg){
+  toast.textContent = msg; toast.classList.add('show');
+  clearTimeout(showToast.t);
+  showToast.t = setTimeout(()=>toast.classList.remove('show'), 2200);
+}
+qs('#rollScenario').addEventListener('click', () => {
+  const i = Math.floor(Math.random() * scenarios.length);
+  display.textContent = scenarios[i];
+  display.animate([{transform:'scale(.98)'},{transform:'scale(1)'}], {duration:180, easing:'cubic-bezier(.2,.8,.2,1)'});
+});
+qs('#markDone').addEventListener('click', () => {
+  if(!display.textContent || /Press roll/i.test(display.textContent)){
+    showToast('Roll a scenario first!');
+  } else {
+    showToast('Nice. +1 micro‑win.');
+  }
+});
+
+// Smooth scroll for in‑page links
+qsa('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const id = a.getAttribute('href');
+    if(id.length > 1){
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth'});
+    }
+  })
+});
+
+/* === Teen‑safe submission form with filtering + rating === */
+const submissionForm = qs('#submissionForm');
+const scenarioInput = qs('#scenarioInput');
+const submissionToast = qs('#submissionToast');
+const safetyBadge = qs('#safetyBadge');
+const ratingPill = qs('#ratingPill');
+const suggestBtn = qs('#suggestClean');
+
+// Categorized lists you can tune over time
+const LEX = {
+  hardBlock: [
+    'suicide','self harm','self-harm','kill','murder','sexual assault','assault','rape','porn','nude','slur','racist',
+    'homophobic','transphobic','kys','die','overdose','nsfw'
+  ],
+  pg13: [
+    'alcohol','drunk','vape','nicotine','drug','weapon','violence','blood','gore','threat','curse','swear'
+  ],
+  mild: [
+    'dang','heck','stupid','hate'
+  ]
+};
+
+const L33T = { '0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','$':'s','!':'i' };
+function normalize(s){
+  return s
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[0-9@!$]/g, ch => L33T[ch] || ch)
+    .replace(/[^a-z\s]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function classify(text){
+  const n = normalize(text);
+  if(!n) return {level:'none', label:'—', pill:'', emoji:'—'};
+  const hit = (arr) => arr.find(w => new RegExp(`(^| )${w}( |$)`).test(n));
+  if(hit(LEX.hardBlock)) return {level:'block', label:'Safety: low', pill:'warn', emoji:'⛔'};
+  if(hit(LEX.pg13)) return {level:'pg13', label:'Safety: caution', pill:'pg13', emoji:'🟠 PG‑13'};
+  if(hit(LEX.mild)) return {level:'pg', label:'Safety: good', pill:'pg', emoji:'🟢 PG'};
+  if(n.split(' ').length > 30) return {level:'pg13', label:'Safety: caution (long)', pill:'pg13', emoji:'🟠 PG‑13'};
+  return {level:'pg', label:'Safety: good', pill:'pg', emoji:'🟢 PG'};
+}
+
+function updateSafetyUI(text){
+  const c = classify(text);
+  safetyBadge.textContent = c.label;
+  safetyBadge.classList.remove('good','warn','bad');
+  if(c.level === 'block') safetyBadge.classList.add('bad');
+  else if(c.level === 'pg13') safetyBadge.classList.add('warn');
+  else if(c.level === 'pg') safetyBadge.classList.add('good');
+
+  ratingPill.textContent = c.emoji || '—';
+  ratingPill.classList.remove('pg','pg13','warn');
+  if(c.pill) ratingPill.classList.add(c.pill);
+  return c;
+}
+
+scenarioInput?.addEventListener('input', ()=> updateSafetyUI(scenarioInput.value));
+
+// simple euphemism map for rewrite suggestions
+const CLEAN_MAP = new Map([
+  ['kill','eliminate'],
+  ['weapon','gear'],
+  ['drug','caffeine'],
+  ['alcohol','sparkling juice'],
+  ['vape','deep breath'],
+  ['nicotine','peppermint'],
+  ['violence','competition'],
+  ['blood','sweat'],
+  ['gore','mud'],
+  ['threat','challenge'],
+  ['suicide','quit‑thoughts'],
+  ['self harm','self‑doubt'],
+  ['porn','pop culture'],
+  ['nude','art'],
+  ['slur','trash talk']
+]);
+
+function suggestCleanRewrite(text){
+  let n = normalize(text);
+  [...LEX.hardBlock, ...LEX.pg13].forEach(w => {
+    const safe = CLEAN_MAP.get(w) || '—';
+    n = n.replace(new RegExp(`(^| )${w}( |$)`, 'g'), (m, a, b) => `${a}${safe}${b}`);
+  });
+  if(n && !/[.!?]$/.test(n)) n += '.';
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
+suggestBtn?.addEventListener('click', () => {
+  const t = scenarioInput.value.trim();
+  if(!t) return showSubmissionToast('Type something first.');
+  scenarioInput.value = suggestCleanRewrite(t);
+  updateSafetyUI(scenarioInput.value);
+});
+
+function showSubmissionToast(msg){
+  submissionToast.textContent = msg; submissionToast.classList.add('show');
+  clearTimeout(showSubmissionToast.t);
+  showSubmissionToast.t = setTimeout(()=>submissionToast.classList.remove('show'), 2200);
+}
+
+submissionForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = scenarioInput.value.trim();
+  const c = updateSafetyUI(text);
+  if(!text){ return showSubmissionToast('Please enter a scenario.'); }
+  if(c.level === 'block'){ return showSubmissionToast('Contains unsafe language. Try the clean rewrite.'); }
+
+  scenarios.push(text);
+  showSubmissionToast('Submitted! Added to this session.');
+  scenarioInput.value = ''; updateSafetyUI('');
+
+  // Optional: send to your backend / Apps Script endpoint for moderation + storage
+  // const ENDPOINT = '';
+  // if(ENDPOINT){
+  //   try { await fetch(ENDPOINT, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({scenario:text, rating:c.level})}); }
+  //   catch(err){ console.warn('Submit hook failed', err); }
+  // }
+});
+
+/* === Load scenarios from your public Google Sheet (view‑only) === */
+const SHEET_ID = '1-Wki-ElEbMIW75FupThB55nsg_SkhfSqYyxK0biw4lw';
+const GID = '369807428';
+async function fetchSheetScenarios(){
+  try{
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
+    const res = await fetch(url, {mode:'cors'});
+    const text = await res.text();
+    const match = text.match(/\{[\s\S]*\}/);
+    if(!match) return;
+    const json = JSON.parse(match[0]);
+    const rows = json.table.rows || [];
+    const list = rows
+      .map(r => (r.c?.[0]?.v || '').toString().trim())
+      .filter(Boolean)
+      .filter(s => classify(s).level !== 'block');
+
+    const set = new Set(scenarios);
+    let added = 0;
+    list.forEach(s => { if(!set.has(s)) { scenarios.push(s); set.add(s); added++; } });
+    if(added){ showToast(`Loaded ${added} scenarios from sheet.`); }
+  } catch(err){
+    console.warn('Sheet fetch failed', err);
+  }
+}
+fetchSheetScenarios();
+  </script>
+</body>
+</html>
