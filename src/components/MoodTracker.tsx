@@ -4,6 +4,7 @@ import { Heart, Zap, Brain, Smile, Meh, Frown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import useShopEffects from "@/hooks/useShopEffects";
 
 const MoodTracker = () => {
   const [selectedMood, setSelectedMood] = useState<string>("");
@@ -88,7 +89,15 @@ const MoodTracker = () => {
         return;
       }
 
-      toast.success('Mood saved');
+      // Rewards and effects
+      const { rewardCoins, triggerConfetti, confettiEnabled, moodInsightsPro } = useShopEffects();
+      await rewardCoins(5, 'mood_checkin');
+      if (confettiEnabled) triggerConfetti();
+      if (moodInsightsPro) {
+        toast.success('Mood saved • +5 coins • Insights updated');
+      } else {
+        toast.success('Mood saved • +5 coins');
+      }
       loadMoodData();
     } catch (error) {
       console.error('Error saving mood:', error);

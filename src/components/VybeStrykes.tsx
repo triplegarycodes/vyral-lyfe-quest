@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import useShopEffects from "@/hooks/useShopEffects";
 
 interface Scenario {
   id: number;
@@ -171,6 +172,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
   const [gameComplete, setGameComplete] = useState(false);
   const [characterReaction, setCharacterReaction] = useState("");
   const { toast } = useToast();
+  const shop = useShopEffects();
 
   // Quick VybeStrike & Teen-safe submission (from landing prototype)
   const [quickScenarios, setQuickScenarios] = useState<string[]>([
@@ -311,6 +313,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
         .maybeSingle();
 
       if (profile) {
+        const xpAdd = Math.round(10 * shop.xpMultiplier());
         await supabase
           .from('profiles')
           .update({
@@ -323,7 +326,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
             clutch_up_stat: Math.max(0, Math.min(100, (profile.clutch_up_stat || 50) + impacts.clutchUp)),
             head_space_stat: Math.max(0, Math.min(100, (profile.head_space_stat || 50) + impacts.headSpace)),
             scene_sense_stat: Math.max(0, Math.min(100, (profile.scene_sense_stat || 50) + impacts.sceneSense)),
-            total_xp: (profile.total_xp || 0) + 10
+            total_xp: (profile.total_xp || 0) + xpAdd
           })
           .eq('user_id', user.id);
       }
@@ -351,6 +354,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
     if (isCorrect) {
       setScore(score + 1);
       setCharacterReaction("Great choice! You're learning to handle life's challenges! 🌟");
+      await shop.rewardCoins(3, 'vybestryks_correct');
     } else {
       setCharacterReaction("That's okay, we all make mistakes. Every choice is a learning opportunity! 💫");
     }
@@ -359,7 +363,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
 
     toast({
       title: isCorrect ? "Excellent Choice!" : "Learning Moment",
-      description: isCorrect ? "Your stats have improved!" : "Keep trying, you'll get better!",
+      description: isCorrect ? `Your stats have improved! +${Math.round(10*shop.xpMultiplier())} XP` : "Keep trying, you'll get better!",
     });
 
     setTimeout(() => {
@@ -382,6 +386,7 @@ const VybeStryks = ({ onBack }: VybeStryksProps) => {
   };
 
   if (gameComplete) {
+    shop.triggerConfetti();
     return (
       <div className="space-y-6">
         <Card className="vyral-card animate-fade-in text-center p-8">

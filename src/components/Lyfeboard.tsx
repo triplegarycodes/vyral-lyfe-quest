@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, X, Edit3, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import useShopEffects from "@/hooks/useShopEffects";
 
 interface StickyNote {
   id: string;
@@ -15,6 +16,7 @@ interface StickyNote {
 
 const Lyfeboard = () => {
   const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([]);
+  const shop = useShopEffects();
   
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
@@ -197,9 +199,16 @@ const Lyfeboard = () => {
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
 
+    const { stickySnapEnabled } = shop;
     const containerRect = containerRef.current.getBoundingClientRect();
-    const newX = Math.max(0, Math.min(containerRect.width - 160, e.clientX - containerRect.left - dragOffset.x));
-    const newY = Math.max(0, Math.min(containerRect.height - 128, e.clientY - containerRect.top - dragOffset.y));
+    let newX = Math.max(0, Math.min(containerRect.width - 160, e.clientX - containerRect.left - dragOffset.x));
+    let newY = Math.max(0, Math.min(containerRect.height - 128, e.clientY - containerRect.top - dragOffset.y));
+
+    if (stickySnapEnabled) {
+      const grid = 20;
+      newX = Math.round(newX / grid) * grid;
+      newY = Math.round(newY / grid) * grid;
+    }
 
     setStickyNotes(stickyNotes.map(note => 
       note.id === isDragging ? { ...note, position: { x: newX, y: newY } } : note

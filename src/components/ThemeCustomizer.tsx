@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Palette, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import useShopEffects from "@/hooks/useShopEffects";
 
 interface ColorScheme {
   name: string;
@@ -44,10 +45,11 @@ const ThemeCustomizer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentScheme, setCurrentScheme] = useState(predefinedSchemes[0]);
   const [customHue, setCustomHue] = useState([200]);
+  const shop = useShopEffects();
 
   useEffect(() => {
     loadPreferences();
-  }, []);
+  }, [shop.fontPlayfair]);
 
   const savePreference = async (theme: string) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -63,19 +65,21 @@ const ThemeCustomizer = () => {
     root.style.setProperty('--accent', scheme.accent);
     root.style.setProperty('--primary-glow', scheme.primaryGlow);
 
-    const [h1] = scheme.primaryGlow.split(' ');
-    const [h2] = scheme.primary.split(' ');
-    const h3 = parseInt(h2) - 20;
+    const h2 = parseInt(scheme.primary.split(' ')[0]);
+    const h3 = (h2 - 20 + 360) % 360;
 
     root.style.setProperty('--gradient-primary',
       `linear-gradient(135deg, hsl(${scheme.primaryGlow}), hsl(${scheme.primary}), hsl(${h3} 100% 45%))`
     );
     root.style.setProperty('--gradient-accent',
-      `linear-gradient(135deg, hsl(${scheme.accent}), hsl(${parseInt(scheme.accent.split(' ')[0]) + 10} 100% 50%))`
+      `linear-gradient(135deg, hsl(${scheme.accent}), hsl(${(parseInt(scheme.accent.split(' ')[0]) + 10) % 360} 100% 50%))`
     );
 
     setCurrentScheme(scheme);
     await savePreference(themeName);
+
+    if (shop.fontPlayfair) document.body.classList.add('font-playfair');
+    else document.body.classList.remove('font-playfair');
   };
 
   const applyCustomHue = async (hue: number) => {
@@ -158,6 +162,35 @@ const ThemeCustomizer = () => {
             ))}
           </div>
         </div>
+
+        {shop.unlockedThemeNames.length > 0 && (
+          <div>
+            <Label className="text-sm font-medium mb-3 block">Unlocked Themes</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {shop.unlockedThemeNames.map((name) => {
+                const extra: Record<string, ColorScheme> = {
+                  "Neon Night": { name: "Neon Night", primary: "200 100% 50%", accent: "320 100% 60%", primaryGlow: "180 100% 60%" },
+                  "Aurora Beam": { name: "Aurora Beam", primary: "160 100% 50%", accent: "220 100% 60%", primaryGlow: "140 100% 60%" },
+                  "Retro Wave": { name: "Retro Wave", primary: "290 80% 60%", accent: "340 90% 60%", primaryGlow: "260 80% 65%" },
+                  "Sunset 84": { name: "Sunset 84", primary: "20 90% 55%", accent: "320 80% 60%", primaryGlow: "40 90% 60%" },
+                };
+                const scheme = extra[name] || predefinedSchemes[0];
+                return (
+                  <Button
+                    key={name}
+                    variant={currentScheme.name === name ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => applyColorScheme(scheme)}
+                    className="text-xs h-8"
+                  >
+                    {name}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
 
         <div>
           <Label className="text-sm font-medium mb-3 block">
