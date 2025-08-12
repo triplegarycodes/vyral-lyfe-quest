@@ -28,7 +28,7 @@ const VentingScreen = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('venting_posts')
         .select('*')
         .eq('user_id', user.id)
@@ -39,7 +39,7 @@ const VentingScreen = () => {
         return;
       }
 
-      setPosts(data || []);
+      setPosts((data as VentingPost[]) || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
@@ -60,7 +60,7 @@ const VentingScreen = () => {
         return;
       }
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('venting_posts')
         .insert({ user_id: user.id, content: newPost.trim() });
 

@@ -75,8 +75,8 @@ const Lyfeboard = () => {
         user_id: user.id,
         content: newNoteContent,
         color: colors[Math.floor(Math.random() * colors.length)],
-        position_x: Math.random() * 200 + 50,
-        position_y: Math.random() * 200 + 50
+         position_x: Math.round(Math.random() * 200 + 50),
+         position_y: Math.round(Math.random() * 200 + 50)
       };
 
       const { data, error } = await supabase
@@ -160,7 +160,7 @@ const Lyfeboard = () => {
     try {
       const { error } = await supabase
         .from('sticky_notes')
-        .update({ position_x: x, position_y: y })
+        .update({ position_x: Math.round(x), position_y: Math.round(y) })
         .eq('id', id);
 
       if (error) {

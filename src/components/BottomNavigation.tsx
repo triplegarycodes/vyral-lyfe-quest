@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Home, Heart, Users, LogOut, Target, TreePine } from "lucide-react";
+import { Home, Heart, Users, LogOut, Target, TreePine, ShoppingBag } from "lucide-react";
 
 interface BottomNavigationProps {
-  currentView: 'dashboard' | 'venting' | 'social' | 'vybestryke' | 'vybetree';
-  onViewChange: (view: 'dashboard' | 'venting' | 'social' | 'vybestryke' | 'vybetree') => void;
+  currentView: 'dashboard' | 'venting' | 'social' | 'vybestryke' | 'vybetree' | 'vshop';
+  onViewChange: (view: 'dashboard' | 'venting' | 'social' | 'vybestryke' | 'vybetree' | 'vshop') => void;
   onSignOut: () => void;
 }
 
@@ -14,6 +14,7 @@ const BottomNavigation = ({ currentView, onViewChange, onSignOut }: BottomNaviga
     { id: 'social' as const, label: 'Social', icon: Users },
     { id: 'vybestryke' as const, label: 'Goals', icon: Target },
     { id: 'vybetree' as const, label: 'VybeTree', icon: TreePine },
+    { id: 'vshop' as const, label: 'V-Shop', icon: ShoppingBag },
   ];
 
   return (
