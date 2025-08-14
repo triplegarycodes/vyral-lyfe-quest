@@ -1,9 +1,10 @@
 import { jsx, jsxs } from "react/jsx-runtime";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, RefreshCw, Wand2 } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Star } from "lucide-react";
 import { toast } from "sonner";
+import useShopEffects from "@/hooks/useShopEffects";
 const VybeOfTheDay = () => {
   const [currentQuote, setCurrentQuote] = useState("Your energy introduces you before you even speak \u2728");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -48,6 +49,21 @@ const VybeOfTheDay = () => {
       setIsGenerating(false);
     }
   };
+
+  const handleReflect = async () => {
+    if (isReflected) {
+      toast.success("Already reflected today!");
+      return;
+    }
+
+    setIsReflected(true);
+    const today = new Date().toDateString();
+    localStorage.setItem(`vybeReflection_${today}`, "true");
+    
+    await rewardCoins(3, "daily_reflection");
+    if (confettiEnabled) triggerConfetti();
+    toast.success("Reflection complete • +3 coins");
+  };
   return /* @__PURE__ */ jsxs(Card, { className: "vyral-card animate-slide-up bg-gradient-to-br from-accent/20 to-primary/10 border-accent/30", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold vyral-text-glow flex items-center gap-2", children: [
@@ -79,10 +95,16 @@ const VybeOfTheDay = () => {
       ] })
     ] }),
     /* @__PURE__ */ jsx("blockquote", { className: "text-foreground/90 italic text-center py-4 px-2 border-l-4 border-primary bg-card/50 rounded-r-lg transition-all duration-300", children: currentQuote }),
-    /* @__PURE__ */ jsx("div", { className: "mt-4 flex justify-center", children: /* @__PURE__ */ jsxs("div", { className: "inline-flex items-center gap-2 text-sm text-muted-foreground", children: [
-      /* @__PURE__ */ jsx("div", { className: "w-2 h-2 bg-primary rounded-full animate-glow-pulse" }),
-      "Keep the vybe alive!"
-    ] }) })
+    /* @__PURE__ */ jsxs("div", { className: "mt-4 flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxs("div", { className: "inline-flex items-center gap-2 text-sm text-muted-foreground", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-2 h-2 bg-primary rounded-full animate-glow-pulse" }),
+        "Reflect to earn coins!"
+      ] }),
+      /* @__PURE__ */ jsx(Button, { size: "sm", onClick: handleReflect, disabled: isReflected, className: isReflected ? "vyral-button-secondary" : "vyral-button-primary", children: /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-1", children: [
+        /* @__PURE__ */ jsx(Star, { className: "w-4 h-4" }),
+        isReflected ? "Reflected" : "Reflect"
+      ] }) })
+    ] })
   ] });
 };
 var VybeOfTheDay_default = VybeOfTheDay;

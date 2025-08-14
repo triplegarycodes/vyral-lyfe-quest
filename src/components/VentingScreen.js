@@ -8,10 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Heart, Clock, Send, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import useShopEffects from "@/hooks/useShopEffects";
 const VentingScreen = () => {
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState("");
   const [loading, setLoading] = useState(false);
+  const { rewardCoins, triggerConfetti, confettiEnabled } = useShopEffects();
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -46,7 +48,9 @@ const VentingScreen = () => {
         toast.error("Failed to create post");
         return;
       }
-      toast.success("Post created successfully");
+      await rewardCoins(3, "venting_post");
+      if (confettiEnabled) triggerConfetti();
+      toast.success("Post created successfully • +3 coins");
       setNewPost("");
       fetchPosts();
     } catch (error) {
