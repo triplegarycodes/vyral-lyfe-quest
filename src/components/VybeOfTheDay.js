@@ -64,6 +64,7 @@ const VybeOfTheDay = () => {
     if (confettiEnabled) triggerConfetti();
     toast.success("Reflection complete • +3 coins");
   };
+
   return /* @__PURE__ */ jsxs(Card, { className: "vyral-card animate-slide-up bg-gradient-to-br from-accent/20 to-primary/10 border-accent/30", children: [
     /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ jsxs("h3", { className: "text-lg font-semibold vyral-text-glow flex items-center gap-2", children: [
