@@ -109,6 +109,20 @@ code {
     @apply bg-glass-card rounded-2xl p-6 border border-white border-opacity-10 hover-glow;
   }
   
+  .glow-text {
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.4);
+    animation: text-glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes text-glow {
+    from {
+      text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    to {
+      text-shadow: 0 0 20px rgba(139, 92, 246, 1), 0 0 30px rgba(139, 92, 246, 0.6);
+    }
+  }
+  
   .level-badge {
     @apply bg-gradient-to-r from-cyber-cyan to-electric-blue text-dark-bg font-gaming font-bold px-3 py-1 rounded-full text-sm;
   }
