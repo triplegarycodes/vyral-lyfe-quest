@@ -1,73 +1,73 @@
-# Welcome to your Lovable project
+# VYRAL 🎮✨
 
-## Project info
+A futuristic teen-centered hub for growth, creativity, and connection with gaming-inspired UI.
 
-**URL**: https://lovable.dev/projects/abe614e2-b7a8-428d-8bd6-fb334129275d
+## Features
 
-## How can I edit this code?
+- **LyfeBoard**: Goal tracking with draggable cards and progress visualization
+- **VybeTree**: Interactive milestone tree with glowing animations
+- **VybeStrike**: Daily RPG-style challenges with XP and streaks
+- **VybeZone**: Peer mentorship hub with chat and avatars
+- **V-Shop**: Virtual reward store with rarity tiers
+- **MoneyMoves**: Gamified budgeting with treasure map UI
+- **B-Vyral**: Creative content feed with safe moderation
+- **Skrybe**: AI-powered creative companion
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Express, PostgreSQL
+- **Auth**: JWT, Google OAuth
+- **Real-time**: Socket.IO
+- **AI**: OpenAI API integration
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/abe614e2-b7a8-428d-8bd6-fb334129275d) and start prompting.
+## Quick Start
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **Setup**: `npm run setup`
+2. **Environment**: Copy `.env.example` files and configure
+3. **Database**: Set up PostgreSQL and run migrations
+4. **Seed Data**: `npm run seed`
+5. **Development**: `npm run dev`
 
-**Use your preferred IDE**
+## Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+vyral-app/
+├── client/          # React frontend
+├── server/          # Node.js backend
+├── shared/          # Shared types and utilities
+└── docs/           # Documentation
 ```
 
-**Edit a file directly in GitHub**
+## Environment Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Server (.env)
+```
+DATABASE_URL=postgresql://username:password@localhost:5432/vyral_db
+JWT_SECRET=your-super-secret-jwt-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+OPENAI_API_KEY=your-openai-api-key
+NODE_ENV=development
+PORT=5000
+```
 
-**Use GitHub Codespaces**
+### Client (.env)
+```
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_GOOGLE_CLIENT_ID=your-google-client-id
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Development
 
-## What technologies are used for this project?
+- Frontend runs on http://localhost:3000
+- Backend runs on http://localhost:5000
+- Database migrations in `server/migrations/`
+- Seed data in `server/seeders/`
 
-This project is built with:
+## Gaming UI Theme
 
-- Vite
-- JavaScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/abe614e2-b7a8-428d-8bd6-fb334129275d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- **Colors**: Neon cyan, purple, electric blue, glitch green
+- **Style**: Dark mode, rounded corners, glowing effects
+- **Animations**: Smooth micro-interactions, level-up celebrations
+- **Mobile-first**: Responsive design for all screen sizes
